@@ -33,13 +33,13 @@ Investigate relationships between predictors and the target variable, as well as
 Create or transform variables to better capture patterns and improve model performance.
 
 #### 6. Behavioral Insights & Hypotheses
-Formulate hypotheses based on data patterns — e.g., "Newer cars with automatic transmission and low mileage have higher resale value."
+Formulate hypotheses based on data patterns — e.g.,  ""
 
 #### 7. Model Building
 Train multiple regression models (e.g., linear regression, decision trees, random forest) to predict car prices.
 
 #### 8. Model Evaluation
-Split: Stratified train/valid/test (70/15/15) OR time-aware split (if months reflect chronology).
+Split: Stratified train/valid/test (70/15/15).
 Use StratifiedKFold for CV; report ROC-AUC, F1, Precision/Recall, Confusion Matrix.
 #### 9. Data Visualization for Storytelling
 Develop intuitive charts and dashboards to communicate findings and support data-driven decision-making for the bank.
