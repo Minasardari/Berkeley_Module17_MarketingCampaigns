@@ -39,14 +39,11 @@ Formulate hypotheses based on data patterns — e.g.,  ""
 Train multiple regression models (e.g., linear regression, decision trees, random forest) to predict car prices.
 
 #### 8. Model Evaluation
-Split: Stratified train/valid/test (70/15/15).
+Split: Stratified train/test (80/20).
 Use StratifiedKFold for CV; report ROC-AUC, F1, Precision/Recall, Confusion Matrix.
 #### 9. Data Visualization for Storytelling
 Develop intuitive charts and dashboards to communicate findings and support data-driven decision-making for the bank.
 
 Mina 5/23
 
-#### 2) Refine Data Collection & Standardization
- Clean and consolidate high-cardinality fields like manufacturer and model during data entry or ingestion
- Less group per categoral feature e.g instead of new and like new and excellent just one group excellent
-#### 3) Implement model for each state and or each manufactuer and build a dashboard
+
