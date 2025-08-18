@@ -254,6 +254,13 @@ Age Distribution is skewed (most clients between 30–60).
 
 
 ### 7. Model Building
+
+     **Pre-processing** 
+     
+     * Train - Test Split
+     * One-Hot encoding 
+     * StandardScaler - Numerical 
+
    *   **A Baseline Model**
        Before we build our first model, we want to establish a baseline. What is the baseline performance that our classifier should aim to beat?
        Baseline Model (Dummy Classifier)
@@ -354,3 +361,73 @@ education_grouped_High School    0.037251
 
        ✅**Logistic Regression is clearly learning patterns that separate “yes” vs. “no”, even though the dataset is imbalanced.**
 
+#### 8. Model Evaluation 
+#### Compare Evaluate Models for classifiers
+Now, we aim to compare the performance of the Logistic Regression model to our KNN algorithm, Decision Tree, and SVM models. Using the default settings for each of the models, fit and score each. Also, be sure to compare the fit time of each of the models. Present your findings
+
+<img width="952" height="525" alt="image" src="https://github.com/user-attachments/assets/9e062493-4f05-46c1-9604-d635c931660e" />
+**Key Observations:**
+
+| Model                  | Train Time (s) | Train Accuracy | Test Accuracy |
+| ---------------------- | -------------- | -------------- | ------------- |
+| Logistic Regression    | 46.40          | 0.8092         | 0.8105        |
+| K-Nearest Neighbors    | 0.12           | 0.9124         | 0.8942        |
+| Decision Tree          | 0.22           | 0.9714         | 0.8634        |
+| Support Vector Machine | 11.44          | 0.8875         | 0.8875        |
+
+
+Logistic Regression: Stable and balanced performance (train ≈ test).
+KNN: Very fast, strong performance but may overfit slightly (train > test).
+Decision Tree: Extremely high training accuracy but weaker test accuracy → clear overfitting.
+SVM: Solid balance, with good generalization and moderate training time.
+
+#### Improving the Model
+Now that we have some basic models on the board, we want to try to improve these. Below, we list a few things to explore in this pursuit.
+
+More feature engineering and exploration. 
+Hyperparameter tuning and grid search. All of our models have additional hyperparameters to tune and explore. For example the number of neighbors in KNN or the maximum depth of a Decision Tree.
+Adjust your performance metric
+1. Appled pCA but model had issue so revert
+2. After fitting a Logistic Regression model, we analyzed feature importance using the absolute values of the coefficients. Features with very small weights (low predictive impact) were identified and dropped:
+Dropped Features:  campaign (coef ≈ 0.061) cons_conf_idx (coef ≈ 0.043)
+3. Find best Hyper Parameter using GridSearchCV
+
+
+| Model                   | Best Params                                                                                           | Train Time (s) | CV ROC-AUC (best) | Train Acc | Test Acc | Test ROC-AUC | Test PR-AUC | Test F1\@0.5 |
+| ----------------------- | ----------------------------------------------------------------------------------------------------- | -------------- | ----------------- | --------- | -------- | ------------ | ----------- | ------------ |
+| **Logistic Regression** | {`lr__C`: 10, `lr__penalty`: l2, `lr__solver`: lbfgs}                                                 | 69.435         | 0.7868            | 0.8097    | 0.8106   | 0.7896       | 0.4491      | 0.4377       |
+| **Decision Tree**       | {`dt__criterion`: entropy, `dt__max_depth`: 5, `dt__min_samples_leaf`: 5, `dt__min_samples_split`: 2} | 9.373          | 0.7823            | 0.9018    | 0.9024   | 0.7893       | 0.4354      | 0.3725       |
+| **SVM**                 | {`clf__C`: 10, `clf__gamma`: scale, `clf__kernel`: linear}                                            | 250.830        | 0.7705            | 0.8940    | 0.8974   | 0.7871       | 0.4396      | 0.3704       |
+| **KNN**                 | {`knn__metric`: manhattan, `knn__n_neighbors`: 11, `knn__weights`: uniform}                           | 37.199         | 0.7537            | 0.9069    | 0.8987   | 0.7612       | 0.3828      | 0.3656       |
+
+
+
+### Observations
+
+- **Logistic Regression**
+  - Balanced and stable performance (train ≈ test).  
+  - Best **PR-AUC** (0.4491) and **F1** (0.4377), making it the strongest model for imbalanced positive detection.  
+
+- **Decision Tree**
+  - Very fast training with high accuracy (0.9024 test), but **PR-AUC and F1 are weaker** than Logistic Regression → suggests bias toward the majority class.  
+  - Slight overfitting risk (train > test).  
+
+- **SVM**
+  - Achieved strong accuracy (0.8974) and competitive ROC-AUC (0.7871).  
+  - Training was **computationally expensive** (250s).  
+  - PR-AUC and F1 lower than Logistic Regression → weaker on positives.  
+
+- **KNN**
+  - Highest training accuracy (0.9069), good test accuracy (0.8987).  
+  - But **lowest ROC-AUC, PR-AUC, and F1**, confirming it struggles with imbalanced class separation.  
+  - Moderate training cost compared to SVM.  
+
+**Conclusion:**  
+Logistic Regression, despite being the simplest model, provides the best **balance of generalization, interpretability, and positive-class detection**.
+
+But lowest ROC-AUC, PR-AUC, and F1, confirming it struggles with imbalanced class separation.
+
+Moderate training cost compared to SVM.
+
+Conclusion: Logistic Regression, despite being the simplest model, provides the best balance of generalization, interpretability, and positive-class detection.
+  
