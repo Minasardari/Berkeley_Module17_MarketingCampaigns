@@ -1,11 +1,19 @@
-# Berkeley_Module17_MarketingCampaigns
-
 # Compare the performance of the classifiers (k-nearest neighbors, logistic regression, decision trees, and support vector machines)
+
 ### Cource : Module 17 Berkeley
 Link to my notebook: https://github.com/Minasardari/Berkeley_Module17_MarketingCampaigns/blob/main/MinaSardari_MarketingCampaigns_Result.ipynb
-### business goal : 
+### Business Goal : 
 The business goal is to predict that if the client would subscribed a term deposit.
 Type: binary classification, class-imbalanced (positives are usually scarce).
+# **Busines Objective**:
+The objective of this project is to improve the effectiveness of the bank’s direct marketing campaigns by predicting whether a client will subscribe to a term deposit, the article marntioned they data contain 17 campaigns information.
+
+By analyzing client demographics, financial attributes, past campaign interactions, and economic indicators, the bank wants to:
+
+*   Identify the most promising clients who are likely to subscribe,
+*   Optimize marketing resources (reduce wasted calls and time),
+*   Increase conversion rates for term deposits, and
+*   Gain insights into which client and campaign factors most influence success.
 
 Business Understanding → Data Science Perspective:
 From a data science perspective, In this practical application, my goal is to compare the performance of the classifiers we have introdued (K Nearest Neighbor, Logistic Regression, Decision Trees, and Support Vector Machines). I will utilize a dataset related to marketing bank products over the telephone.
@@ -22,7 +30,7 @@ Address missing values, duplicates, and incorrect data types; prepare the data f
 Ensure types: categorical vs numeric; lower-case strings; strip whitespace.
 Target map: y ∈ {yes,no} → {1,0}.
 Specials : pdays=999 ⇒ “not previously contacted”. Create prev_contacted = (pdays != 999) and replace 999 with NaN (or keep two features).
-Handle duplicates, impossible ages (e.g., < 16 or > 100), negative counts, etc.
+Handle duplicates, impossible ages outliers, negative counts, etc.
 #### 3. EDA – Univariate Analysis
 Explore the distribution of individual variables to identify trends, outliers, and data quality issues.
 
@@ -44,6 +52,204 @@ Use StratifiedKFold for CV; report ROC-AUC, F1, Precision/Recall, Confusion Matr
 #### 9. Data Visualization for Storytelling
 Develop intuitive charts and dashboards to communicate findings and support data-driven decision-making for the bank.
 
-Mina 5/23
+
+
+### 1. Understanding the Dataset
+
+Step 1: Load and Inspect the Data
+df.head() – View the first few rows to understand structure.
+df.info() – Check column names, data types, and non-null counts.
+df.describe() – Review statistical summaries of numeric columns.
+df.columns – Look for naming inconsistencies
+
+Step 2: Identify Missing Values
+#### Calculate missing values and their percentage
+ <img width="224" height="344" alt="image" src="https://github.com/user-attachments/assets/316d157a-e657-4281-bc57-1cc27c5b7896" />
+
+
+Step 3: explore data uniqe values for categorial features 
+  Calculate proportions
+  Replace NaN index labels with a string for display ''unknown
+  Plot to see value counts
+<img width="454" height="277" alt="image" src="https://github.com/user-attachments/assets/0caba558-3686-4d99-acc6-43da9a2641f1" />
+<img width="1187" height="1189" alt="image" src="https://github.com/user-attachments/assets/0d5da2b1-38c2-46ea-b69e-619e0e5328cf" />
+
+
+### 2. Initial Data Cleaning
+step 1: Drop Duplicate
+Step 2: Drop Columns 
+step 3: Categorical Features Imputation: Data provided is pretty clean and no NAN or it has been replaced by Unknown
+step 4: Detect Data Quality Issues : Data was clean no inconsistent values in categorical columns
+Step 5: Numerical Features Imputation: didn't find any column to impute for now later based on EDA we may do some more
+
+### 3. EDA 
+ #### a. Univariate Analysis
+<img width="1187" height="1189" alt="image" src="https://github.com/user-attachments/assets/e161d056-a655-47a6-97ef-a605ddc7446a" />
+<img width="1489" height="922" alt="image" src="https://github.com/user-attachments/assets/d8281218-3a71-41bd-ab06-d3ac867b651a" />
+<img width="1489" height="922" alt="image" src="https://github.com/user-attachments/assets/9201e0fc-35b7-47a0-a091-7718762af173" />
+
+ #### b. Bivariate and Multivariate Analysis
+
+<img width="1990" height="2390" alt="image" src="https://github.com/user-attachments/assets/5b559f98-757b-41d3-8b59-791321a57984" />
+<img width="1489" height="923" alt="image" src="https://github.com/user-attachments/assets/5d68bd04-88e4-4a62-b26e-a8f9e8e64383" />
+<img width="589" height="569" alt="image" src="https://github.com/user-attachments/assets/0c9ad0bb-cba2-440d-a547-df478b737348" />
+<img width="600" height="700" alt="image" src="https://github.com/user-attachments/assets/08529f2a-bd7a-41b0-a384-d85b2b7d3e80" />
+<img width="589" height="455" alt="image" src="https://github.com/user-attachments/assets/5bf0fa44-ef20-47d7-998c-3dd8f2bd9d61" />
+
+#### c. Findings
+<img width="686" height="395" alt="image" src="https://github.com/user-attachments/assets/70ea11bb-17f8-4b4d-a09d-2954d7eb0367" />
+
+**Numerical:**
+1. age : Right-skewed, most clients between 25–60, with outliers up to ~100. outlier >70 but may keep <90, maybe keep older clients’ signal as seems retired customer who say Yes are low amost 25% so amybe better keep 70 to 90.
+ Distribution for yes and no is quite similar (both center ~38–40)
+2. campaign:  
+  *   Highly skewed. extreme outliers (values > 10).
+  *   Median campaign is slightly higher for “no” (more calls → more rejection).
+  *   Those who said “yes” usually had fewer contacts.
+
+3. previous: 
+  *   Mostly 0, very skewed. may onvert to a binary indicator (prev_contacted = previous > 0).
+  *   Clients who subscribed (“yes”) had higher previous values (more often contacted before).
+
+4. emp_var_rate: 
+  *   Discrete values with clear peaks -3, -2, -1, 0, 1.
+  *   lear difference:
+   no -> higher employment variation rate (~1).
+   yes -> lower, even negative values.
+
+5. cons_price_idx: Clustered around specific values, looks more categorical.
+    *    yes clients are slightly associated with lower price index (93.0–93.5) compared to no.
+    *   Difference is modest but present.
+6. cons_conf_idx: 
+    *   Distinct clusters/peaks.
+    *  yes clients linked to lower consumer confidence (worse sentiment, ~–40 vs –45).
+    *  Good separation.
+7. euribor3m:WiStrong separation:
+
+    *  no clients -> higher rates (~5).
+
+    *  yes clients -> lower rates (~1).
+8. nr_employed:
+    *  highly correlated with emp_var_rate and euribor3m
+    *  no → higher employment numbers (~5200).
+    *  yes → lower (~5000).
+
+
+**categorical:**
+
+1. job
+
+  *   Diverse categories, with admin, blue-collar, technician, services dominating.
+  *   Some categories have very few samples (e.g., unknown).
+  *   Decision: grouping rare jobs into "Other".
+
+2. marital
+
+  *   Mostly married, then single, fewer divorced.
+  *   Decision: Drop unknown (very few).
+
+3. education
+
+  *   Spread across several categories, with university degree leading.
+  *   Some categories very small (illiterate, unknown).
+  *   Decision: Group rare levels.
+
+4. default
+
+  *   Majority no, with many unknown. Very few yes.
+  *   Decision: Potentially drop, since too imbalanced and dominated by unknowns.
+
+4. housing  
+  *   Balanced between yes and no, few unknown.
+  *   Decision: keep maybe combine with loan to make onw has_loan
+5. loan
+  *   Mostly no, some yes, some unknown.
+  *   Decision: keep maybe combine with housing to make onw has_loan
+
+6. month
+  *   imbalance
+  *   Decision: Keep, but instead of raw categorical, encode as seasonality
+7. day_of_week
+  *   very balanced and also in yes percentage almost same for all days
+  *   Decision: Drop low impact
+8. poutcome
+   *   Mostly nonexistent (no previous campaign), few success/failure.
+  *   Decision: based on barchart yes percetage is high when previous campaingn is high
+9. prev_contacted
+   *   Mostly no, some yes.
+   *   Decision: Keep — useful binary predictor.
+
+
+
+**the correlation heatmap:**
+
+*    Observations
+
+
+1. High correlations ( 0.9+)
+    emp_var_rate, euribor3m, and nr_employed are very strongly correlated (red blocks). This means they carry the same economic signal (labor market + interest rates). we can use **PCA**
+2. Moderate correlations
+
+      emp_var_rate also moderately correlated with cons_price_idx and cons_conf_idx.
+      That makes sense: all are macroeconomic indicators.
+
+3. Low/near-zero correlations
+
+      age, campaign, and previous are not correlated with the economic features they bring independent customer info.
+
+**PairPlot**
+Age Distribution is skewed (most clients between 30–60).
+
+### 5. Feature Engineering Ideas
+**1. Age Binning**
+
+  *    Capped ages at <90.
+  *    Grouped ages into categories: <30, 30–50, 50–70, 70+.
+  *    Dropped the original age column after creating age_group.
+
+**2. Campaign Outliers**
+
+  *    Limited (capped) campaign contacts to 10 (values above 10 set to 10).
+**3. Previous Contacts**
+  *    Converted previous into a binary indicator: 1 if previously contacted, 0 otherwise.
+
+**4. Job Simplification**
+  *   Grouped rare job categories (less than 1720 occurrences) into "Other".
+  *   Dropped the original job column.
+
+**5. Marital Status**
+  *   Dropped rows with "unknown" marital status (very few cases).
+
+**6. Education Simplification**
+  *   Mapped education into broader groups:
+      *    university.degree / professional.course → Higher**
+      *    basic.4y / basic.6y / basic.9y → Basic
+      *    high.school → High School
+      *    illiterate / unknown → Other
+  *  Dropped the original education column.
+
+**7. Default Column**
+  *   Dropped default column (mostly "no" or "unknown", very few "yes").
+
+**8. Loan Information**
+  *   Combined housing and loan into a single column has_loan (1 if either is "yes").
+  *   Dropped housing and loan.
+
+**9. Day of Week**
+  *   Dropped day_of_week since it was fairly balanced and not predictive.
+
+**10. Previous Contacted Flag**
+  *   Converted prev_contacted into binary: 1 = yes, 0 = no.
+
+**11 Month**
+  *   Created month_quarter feature (Q1–Q4).
+  *   Dropped the raw month and month_num columns.
+
+  **Final Features**
+
+  <img width="1579" height="124" alt="image" src="https://github.com/user-attachments/assets/3e295a73-235e-4577-bf87-cf961dbc2f69" />
+
+### 6. Test the null hypothesis:
+ <img width="708" height="351" alt="image" src="https://github.com/user-attachments/assets/f9992d41-5345-4c7e-8f8e-6c87945352fa" />
 
 
