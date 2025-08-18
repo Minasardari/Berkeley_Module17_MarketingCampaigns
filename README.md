@@ -253,3 +253,104 @@ Age Distribution is skewed (most clients between 30–60).
  <img width="708" height="351" alt="image" src="https://github.com/user-attachments/assets/f9992d41-5345-4c7e-8f8e-6c87945352fa" />
 
 
+### 7. Model Building
+   *   **A Baseline Model**
+       Before we build our first model, we want to establish a baseline. What is the baseline performance that our classifier should aim to beat?
+       Baseline Model (Dummy Classifier)
+
+          **Model:**
+          Used DummyClassifier(strategy="most_frequent") → always predicts the majority class from the training set.
+          
+          **Purpose:**
+          Provides a baseline that real models should beat. If your ML models don’t outperform this, they’re not useful.
+          
+          **Metrics Evaluated:**
+          
+          Accuracy (train/test) – how often the classifier is correct.
+          ROC-AUC – area under the ROC curve (default is 0.5 if no probability output).
+          F1 (positive class) – harmonic mean of precision and recall for the yes class.
+          PR-AUC (Average Precision) – area under the precision–recall curve, useful for imbalanced data.
+          
+          **Implementation Notes:**
+          Probabilities (predict_proba) are used if available; otherwise, the code falls back to class predictions.
+          ```python
+          Baseline:
+          accuracy train: 0.8875235719934302
+          accuracy test: 0.8874695863746959
+          roc_auc: 0.5
+          f1_positive: 0.0
+          pr_auc: 0.11253041362530414
+          ```
+   *   **A Simple Model**
+          Use Logistic Regression to build a basic model on your data.
+      **Model:**
+         Trained a LogisticRegression classifier on the processed dataset.
+     **Purpose:**
+         Serves as the first real predictive model beyond the baseline. It tests whether linear decision boundaries can separate the target classes.
+     **Metrics Evaluated:**
+         Accuracy (train/test) – proportion of correct predictions.
+         ROCAUC – area under the ROC curve, capturing the model’s ability to rank positive vs negative cases.
+         F1 (positive class) – harmonic mean of precision and recall for the yes class.
+         PR-AUC (Average Precision) – area under the precision–recall curve, helpful for imbalanced classes.
+      ```python
+          Logistic Regression:
+          accuracy train: 0.8092341383295821
+          accuracy test: 0.8104622871046229
+          roc_auc: 0.7896102106218623
+          f1_positive: 0.4375451263537906
+          pr_auc: 0.4491645267848371
+          time_inference_sec: 49.91781949996948
+       ```
+   
+       Get Top features (by |coef|):
+       ```python
+                      feature  importance
+                 emp_var_rate    1.584100
+             month_quarter_Q4    1.523706
+                    euribor3m    1.390182
+             month_quarter_Q2    1.363378
+                  nr_employed    0.834115
+             month_quarter_Q3    0.772944
+             poutcome_success    0.739794
+            contact_telephone    0.550660
+                age_group_70+    0.441395
+               cons_price_idx    0.354817
+                age_group_<30    0.230109
+               prev_contacted    0.212883
+       job_grouped_bluecollar    0.197594
+                     previous    0.177836
+         job_grouped_services    0.166620
+              age_group_50-70    0.166039
+      education_grouped_Other    0.138520
+       job_grouped_management    0.125899
+     education_grouped_Higher    0.122312
+       job_grouped_technician    0.093119
+               marital_single    0.089785
+            job_grouped_admin    0.081088
+                     campaign    0.063003
+                cons_conf_idx    0.061840
+education_grouped_High School    0.037251
+              marital_married    0.027753
+                     has_loan    0.018548
+         poutcome_nonexistent    0.011729
+     ```
+
+
+     ### **Dummy Classifier (predicts majority class or random)**
+       
+       *   Accuracy train/test ≈ 88.7% (same as majority “no” rate).
+       *   ROC-AUC = 0.5 Random guess    
+       *   F1 = 0.0 ->never predicts positive
+       *   PR-AUC ≈ 0.11 -> equal to positive class prevalence.
+        
+       **⚠️This shows what happens if you don't learn anything always predict no.**
+
+      ### **Logistic Regression (baseline model)**
+
+       *   ROC-AUC = 0.79 -> strong improvement, the model is actually ranking positives higher.
+       *   PR-AUC = 0.45 -> way above the 0.11 baseline someans model is capturing meaningful signal.
+       *   F1(0.5) = 0.439 -> good balance between precision and recall.
+       *   Training time = 0.04 sec -> fast and efficient.
+
+       ✅**Logistic Regression is clearly learning patterns that separate “yes” vs. “no”, even though the dataset is imbalanced.**
+
