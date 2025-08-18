@@ -430,4 +430,14 @@ But lowest ROC-AUC, PR-AUC, and F1, confirming it struggles with imbalanced clas
 Moderate training cost compared to SVM.
 
 Conclusion: Logistic Regression, despite being the simplest model, provides the best balance of generalization, interpretability, and positive-class detection.
+
+
+
+
+### ROC Curve Comparison
+
+The ROC curves below compare all tuned models on the test set.  
+<img width="691" height="547" alt="image" src="https://github.com/user-attachments/assets/c19a18d1-2d6a-47dc-9d64-21352d2206a6" />
+- Logistic Regression, Decision Tree, and SVM achieved similar **AUC ≈ 0.79**.  
+- KNN lagged behind with **AUC = 0.76**, confirming weaker ranking ability.  
   
